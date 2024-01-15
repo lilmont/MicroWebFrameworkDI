@@ -1,5 +1,6 @@
 ﻿using MicroWebFramework.Contracts;
 using MicroWebFramework.Entities;
+using MicroWebFramework.Services;
 using System.Text;
 
 namespace MicroWebFramework.Controllers;
@@ -7,10 +8,10 @@ namespace MicroWebFramework.Controllers;
 public class UsersController
 {
     private readonly HttpContext _httpContext;
-    private readonly INotificationService _notificationService;
+    private readonly IEnumerable<INotificationService> _notificationService;
 
     public UsersController(HttpContext httpContext,
-        INotificationService notificationService)
+        IEnumerable<INotificationService> notificationService)
     {
         _httpContext = httpContext;
         _notificationService = notificationService;
@@ -45,6 +46,18 @@ public class UsersController
     {
         var user = users.SingleOrDefault(p => p.Id == userId);
         if (user != null)
-            _notificationService.Send(user.Email, $"User {user.Name} is created.");
+        {
+            if (!string.IsNullOrEmpty(user.Email))
+            {
+                _notificationService.SingleOrDefault(p=>p is EmailService).
+                    Send(user.Email, $"User {user.Name} is created.");
+            }
+            else
+                _notificationService.SingleOrDefault(p => p is SMSService).
+                    Send(user.PhoneNumber, $"User {user.Name} is created.");
+            _httpContext.Response.OutputStream.Write(
+               Encoding.UTF8.GetBytes($"Notification was sent to {user.Name}"));
+        }
+            
     }
 }

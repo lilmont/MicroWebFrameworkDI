@@ -1,4 +1,4 @@
-﻿namespace MicroWebFramework;
+﻿namespace MicroWebFramework.Entities;
 public class User
 {
     public required int Id { get; set; }

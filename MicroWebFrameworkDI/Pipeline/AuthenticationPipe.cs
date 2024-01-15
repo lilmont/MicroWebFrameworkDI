@@ -1,4 +1,4 @@
-﻿namespace MicroWebFramework;
+﻿namespace MicroWebFramework.Pipeline;
 public class AuthenticationPipe : BasePipe
 {
     public AuthenticationPipe(Action<HttpContext> next) : base(next)

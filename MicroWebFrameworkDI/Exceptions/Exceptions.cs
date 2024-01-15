@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace MicroWebFramework;
+namespace MicroWebFramework.Exceptions;
 public class BannedIPException : ApplicationException
 {
     public BannedIPException(string ip) :

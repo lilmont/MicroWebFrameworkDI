@@ -1,5 +1,6 @@
 ﻿using Dumpify;
 using MicroWebFramework;
+using MicroWebFramework.Pipeline;
 using System.Net;
 
 var httpPrefix = "http://localhost:7776/";

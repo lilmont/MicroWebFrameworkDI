@@ -1,4 +1,6 @@
-﻿namespace MicroWebFramework;
+﻿using MicroWebFramework.Exceptions;
+
+namespace MicroWebFramework.Pipeline;
 
 public class ExceptionHandlingPipe : BasePipe
 {

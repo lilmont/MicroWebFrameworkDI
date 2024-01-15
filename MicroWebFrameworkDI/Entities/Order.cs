@@ -1,4 +1,4 @@
-﻿namespace MicroWebFramework
+﻿namespace MicroWebFramework.Entities
 {
     public class Order
     {

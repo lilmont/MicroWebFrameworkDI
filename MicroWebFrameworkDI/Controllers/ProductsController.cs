@@ -1,6 +1,7 @@
 ﻿using System.Text;
+using MicroWebFramework.Entities;
 
-namespace MicroWebFramework;
+namespace MicroWebFramework.Controllers;
 public class ProductsController
 {
     private readonly HttpContext _httpContext;

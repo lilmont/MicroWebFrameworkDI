@@ -1,4 +1,4 @@
-﻿namespace MicroWebFramework;
+﻿namespace MicroWebFramework.Pipeline;
 public abstract class BasePipe
 {
     protected readonly Action<HttpContext> _next;

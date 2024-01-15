@@ -1,4 +1,6 @@
-﻿namespace MicroWebFramework;
+﻿using MicroWebFramework.Exceptions;
+
+namespace MicroWebFramework.Pipeline;
 public class EndPointPipe : BasePipe
 {
     public EndPointPipe() : base(null)
@@ -23,7 +25,7 @@ public class EndPointPipe : BasePipe
             if (string.IsNullOrEmpty(actionName))
                 throw new NoActionProvidedException();
 
-            var controllerNameTemplate = $"MicroWebFramework.{controllerName}Controller";
+            var controllerNameTemplate = $"MicroWebFramework.Controllers.{controllerName}Controller";
             var controllerType = Type.GetType(controllerNameTemplate);
             var controllerInstance = Activator.CreateInstance(controllerType, new[] { context });
             var methodInfo = controllerType.GetMethod(actionName);

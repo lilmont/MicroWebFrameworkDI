@@ -43,7 +43,12 @@ public class EndPointPipe : BasePipe
                     services.Add(container.Resolve<INotificationService, EmailService>());
                 }
             }
-            var controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, services });
+            object controllerInstance;
+            if (services.Count > 0)
+                controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, services });
+            else
+                controllerInstance = Activator.CreateInstance(controllerType, new object[] { context });
+
             var methodInfo = controllerType.GetMethod(actionName);
 
             if (methodInfo is null)

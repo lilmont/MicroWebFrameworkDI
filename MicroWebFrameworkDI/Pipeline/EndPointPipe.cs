@@ -1,4 +1,8 @@
-﻿using MicroWebFramework.Exceptions;
+﻿using MicroWebFramework.Contracts;
+using MicroWebFramework.DI;
+using MicroWebFramework.Exceptions;
+using MicroWebFramework.Services;
+using System.ComponentModel;
 
 namespace MicroWebFramework.Pipeline;
 public class EndPointPipe : BasePipe
@@ -27,7 +31,19 @@ public class EndPointPipe : BasePipe
 
             var controllerNameTemplate = $"MicroWebFramework.Controllers.{controllerName}Controller";
             var controllerType = Type.GetType(controllerNameTemplate);
-            var controllerInstance = Activator.CreateInstance(controllerType, new[] { context });
+            var controllerConstructor = controllerType.GetConstructors().First();
+            var controllerParameters = new object[] { context };
+            List<INotificationService> services = new List<INotificationService>();
+            var container = new DependencyContainer();
+            foreach (var param in controllerConstructor.GetParameters())
+            {
+                if (typeof(IEnumerable<INotificationService>).IsAssignableFrom(param.ParameterType))
+                {
+                    services.Add(container.Resolve<INotificationService, SMSService>());
+                    services.Add(container.Resolve<INotificationService, EmailService>());
+                }
+            }
+            var controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, services });
             var methodInfo = controllerType.GetMethod(actionName);
 
             if (methodInfo is null)

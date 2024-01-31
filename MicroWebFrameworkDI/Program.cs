@@ -1,8 +1,6 @@
-﻿using MicroWebFramework;
-using MicroWebFramework.Contracts;
-using MicroWebFramework.DI;
+﻿using Dumpify;
+using MicroWebFramework;
 using MicroWebFramework.Pipeline;
-using MicroWebFramework.Services;
 using System.Net;
 
 var httpPrefix = "http://localhost:7776/";
@@ -32,7 +30,7 @@ finally
 }
 
 void HandleRequest(HttpListenerContext httpContext)
-{    
+{
     try
     {
         HttpContext request = new()

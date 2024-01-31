@@ -41,8 +41,8 @@ public class UsersController
         return;
     }
 
-    // Users/NotifyUser/{id}
-    public void NotifyUser(int userId)
+    // Users/CreateUser/{id}
+    public void CreateUser(int userId)
     {
         var user = users.SingleOrDefault(p => p.Id == userId);
         if (user != null)

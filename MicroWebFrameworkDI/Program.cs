@@ -5,9 +5,12 @@ using System.Net;
 var httpPrefix = "http://localhost:7776/";
 HttpListener httpListener = new HttpListener();
 httpListener.Prefixes.Add(httpPrefix);
-
 Console.WriteLine($"Listening on {httpPrefix} ...");
-
+var pipeline = new PipelineBuilder()
+            .AddPipe(typeof(ExceptionHandlingPipe))
+            .AddPipe(typeof(AuthenticationPipe))
+            .AddPipe(typeof(EndPointPipe))
+            .Build();
 try
 {
     httpListener.Start();
@@ -39,13 +42,6 @@ void HandleRequest(HttpListenerContext httpContext)
             Response = httpContext.Response,
             Request = httpContext.Request
         };
-
-        var pipeline = new PipelineBuilder()
-            .AddPipe(typeof(ExceptionHandlingPipe))
-            .AddPipe(typeof(AuthenticationPipe))
-            .AddPipe(typeof(EndPointPipe))
-            .Build();
-
         pipeline(request);
     }
     catch (Exception ex)

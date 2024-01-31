@@ -2,12 +2,11 @@
 using MicroWebFramework.DI;
 using MicroWebFramework.Exceptions;
 using MicroWebFramework.Services;
-using System.ComponentModel;
 
 namespace MicroWebFramework.Pipeline;
 public class EndPointPipe : BasePipe
 {
-    public EndPointPipe() : base(null)
+    public EndPointPipe() : base(null!)
     {
     }
     public EndPointPipe(Action<HttpContext> next) : base(next)
@@ -44,6 +43,7 @@ public class EndPointPipe : BasePipe
                 }
             }
             object controllerInstance;
+
             if (services.Count > 0)
                 controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, services });
             else

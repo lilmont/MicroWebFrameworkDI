@@ -45,11 +45,17 @@ public class UsersController
     public void NotifyUser(int userId)
     {
         var user = users.SingleOrDefault(p => p.Id == userId);
-        if (user != null)
+        if (user is null)
+        {
+            _httpContext.Response.OutputStream.Write(
+                Encoding.UTF8.GetBytes($"No user was found with id: {userId}!!"));
+            return;
+        }
+        else
         {
             if (!string.IsNullOrEmpty(user.Email))
             {
-                _notificationService.SingleOrDefault(p=>p is EmailService).
+                _notificationService.SingleOrDefault(p => p is EmailService).
                     Send(user.Email, $"User {user.Name} is created.");
             }
             else
@@ -58,6 +64,5 @@ public class UsersController
             _httpContext.Response.OutputStream.Write(
                Encoding.UTF8.GetBytes($"Notification was sent to {user.Name}"));
         }
-            
     }
 }

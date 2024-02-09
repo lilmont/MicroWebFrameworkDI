@@ -8,7 +8,11 @@ A httpListenere that listens for requests and runs them through a pipleline with
 
 I have also tried to implement a dependency injection service with three lifetimes: singleton, scoped, and transient which enabled using DI in controllers.
 
+<<<<<<< HEAD
 You can see number of instances created change in ```http://localhost:7776/Users/NotifyUser/{id}``` with each request.
+=======
+You can see number of instances created change in http://localhost:7776/Users/NotifyUser/{id} with each request.
+>>>>>>> 4dbe9c66040a1d2864ccfd463b2ec1c71c266855
 
 **You can try these URLs like:**
 ```

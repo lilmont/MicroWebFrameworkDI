@@ -2,6 +2,7 @@
 using MicroWebFramework.DI;
 using MicroWebFramework.Exceptions;
 using MicroWebFramework.Services;
+using System.Linq;
 
 namespace MicroWebFramework.Pipeline;
 public class EndPointPipe : BasePipe
@@ -29,25 +30,39 @@ public class EndPointPipe : BasePipe
                 throw new NoActionProvidedException();
 
             var controllerNameTemplate = $"MicroWebFramework.Controllers.{controllerName}Controller";
-            var controllerType = Type.GetType(controllerNameTemplate);
-            var controllerConstructor = controllerType.GetConstructors().First();
-            var controllerParameters = new object[] { context };
-            List<INotificationService> services = new List<INotificationService>();
-            var container = new DependencyContainer();
-            foreach (var param in controllerConstructor.GetParameters())
+            var controllerType = Type.GetType(controllerNameTemplate); 
+            
+            if(controllerType is null)
+                throw new RouteNotFoundException();
+
+            var controllerConstructor = controllerType!.GetConstructors().First();
+            var controllerConstructorParameters = controllerConstructor.GetParameters();
+            var controllerParameters = new List<object>();
+            //var service = new DependencyServiceProvider();
+            foreach (var param in controllerConstructorParameters)
             {
-                if (typeof(IEnumerable<INotificationService>).IsAssignableFrom(param.ParameterType))
+                if (param.ParameterType.IsInterface)
                 {
-                    services.Add(container.Resolve<INotificationService, SMSService>());
-                    services.Add(container.Resolve<INotificationService, EmailService>());
+                    controllerParameters.Add(DependencyServiceProvider.Get(param.ParameterType));
+                    //services.Add(container.Resolve<INotificationService, EmailService>());
                 }
             }
-            object controllerInstance;
+            var parameterArray = new object[controllerConstructorParameters.Length];
+            for (int i = 0; i < controllerConstructorParameters.Length; i++)
+            {
+                if (controllerConstructorParameters.ElementAt(i).ParameterType == typeof(HttpContext))
+                    parameterArray[i] = context;
+                else if (controllerConstructorParameters.ElementAt(i).ParameterType.IsInterface)
+                    parameterArray[i] = controllerParameters.Where(p =>
+                        controllerConstructorParameters.ElementAt(i).ParameterType
+                        .IsAssignableFrom(p.GetType())).FirstOrDefault()!;
+            }
 
-            if (services.Count > 0)
-                controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, services });
-            else
-                controllerInstance = Activator.CreateInstance(controllerType, new object[] { context });
+            object controllerInstance = Activator.CreateInstance(controllerType, parameterArray)!;
+            //if (controllerParameters.Count > 0)
+            //    controllerInstance = Activator.CreateInstance(controllerType, new object[] { context, controllerParameters })!;
+            //else
+            //    controllerInstance = Activator.CreateInstance(controllerType, new object[] { context })!;
 
             var methodInfo = controllerType.GetMethod(actionName);
 
@@ -55,7 +70,6 @@ public class EndPointPipe : BasePipe
                 throw new RouteNotFoundException();
 
             var parameterList = methodInfo.GetParameters();
-
             if (parameterList.Length > 0 && parts.Length > 3)
             {
                 userId = parts[3];

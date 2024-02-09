@@ -1,6 +1,13 @@
 ﻿using MicroWebFramework;
+using MicroWebFramework.Contracts;
+using MicroWebFramework.DI;
 using MicroWebFramework.Pipeline;
+using MicroWebFramework.Services;
 using System.Net;
+
+DependencyServiceProvider.AddSingleton<INotificationService,SMSService>();
+//DependencyServiceProvider.AddScoped<INotificationService,SMSService>();
+//DependencyServiceProvider.AddTransient<INotificationService,SMSService>();
 
 var httpPrefix = "http://localhost:7776/";
 HttpListener httpListener = new HttpListener();
@@ -17,7 +24,6 @@ try
     while (true)
     {
         HttpListenerContext httpContext = httpListener.GetContext();
-
         Task.Run(() => HandleRequest(httpContext));
     }
 

@@ -1,6 +1,6 @@
 ﻿using MicroWebFramework.Contracts;
+using MicroWebFramework.DI;
 using MicroWebFramework.Entities;
-using MicroWebFramework.Services;
 using System.Text;
 
 namespace MicroWebFramework.Controllers;
@@ -8,10 +8,10 @@ namespace MicroWebFramework.Controllers;
 public class UsersController
 {
     private readonly HttpContext _httpContext;
-    private readonly IEnumerable<INotificationService> _notificationService;
+    private readonly INotificationService _notificationService;
 
     public UsersController(HttpContext httpContext,
-        IEnumerable<INotificationService> notificationService)
+        INotificationService notificationService)
     {
         _httpContext = httpContext;
         _notificationService = notificationService;
@@ -37,7 +37,7 @@ public class UsersController
         }
         _httpContext.Response.OutputStream.Write(
                 Encoding.UTF8.GetBytes(
-                    users.SingleOrDefault(p => p.Id == id).Name));
+                    users.SingleOrDefault(p => p.Id == id)!.Name));
         return;
     }
 
@@ -53,16 +53,11 @@ public class UsersController
         }
         else
         {
-            if (!string.IsNullOrEmpty(user.Email))
-            {
-                _notificationService.SingleOrDefault(p => p is EmailService).
-                    Send(user.Email, $"User {user.Name} is created.");
-            }
-            else
-                _notificationService.SingleOrDefault(p => p is SMSService).
-                    Send(user.PhoneNumber, $"User {user.Name} is created.");
+            if (!string.IsNullOrEmpty(user.PhoneNumber))
+                _notificationService.Send(user.PhoneNumber, $"User {user.Name} is created.");
             _httpContext.Response.OutputStream.Write(
-               Encoding.UTF8.GetBytes($"Notification was sent to {user.Name}"));
+               Encoding.UTF8.GetBytes($"Notification was sent to {user.Name}\n" +
+               $"Number of created instance of INotificationService {DependencyServiceProvider.NumberOfInstances}"));
         }
     }
 }

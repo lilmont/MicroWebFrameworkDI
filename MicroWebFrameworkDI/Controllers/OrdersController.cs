@@ -1,19 +1,15 @@
-﻿using System.Text;
+﻿using MicroWebFramework.Entities;
+using System.Text;
 using System.Text.Json;
-using MicroWebFramework.Contracts;
-using MicroWebFramework.Entities;
 
 namespace MicroWebFramework.Controllers;
 public class OrdersController
 {
     private readonly HttpContext _httpContext;
-    private readonly INotificationService _notificationService;
 
-    public OrdersController(HttpContext httpContext,
-        INotificationService notificationService)
+    public OrdersController(HttpContext httpContext)
     {
         _httpContext = httpContext;
-        _notificationService = notificationService;
     }
 
     List<Order> orders = new List<Order>()
@@ -34,5 +30,20 @@ public class OrdersController
         });
         _httpContext.Response.OutputStream.Write(
                 Encoding.UTF8.GetBytes(ordersJson));
+    }
+
+    // Orders/GetOrderById/{id}
+    public void GetOrderById(int id)
+    {
+        if (!orders.Any(p => p.Id == id))
+        {
+            _httpContext.Response.OutputStream.Write(
+                Encoding.UTF8.GetBytes($"No order was found with id: {id}!"));
+            return;
+        }
+        _httpContext.Response.OutputStream.Write(
+                Encoding.UTF8.GetBytes(
+                    orders.SingleOrDefault(p => p.Id == id)!.Title));
+        return;
     }
 }

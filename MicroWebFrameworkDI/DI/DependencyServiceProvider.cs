@@ -7,6 +7,7 @@ public static class DependencyServiceProvider
 
     private static Dictionary<Type, object> existingInstances =
         new Dictionary<Type, object>();
+
     public static void AddSingleton<TService, TImplementation>() where TImplementation : TService
     {
         services.Add(new DependencyServiceWrapper
@@ -16,6 +17,7 @@ public static class DependencyServiceProvider
             LifeTime = ServiceLifeTime.Singleton
         });
     }
+
     public static void AddScoped<TService, TImplementation>() where TImplementation : TService
     {
         services.Add(new DependencyServiceWrapper
@@ -72,9 +74,9 @@ public static class DependencyServiceProvider
 
 public class DependencyServiceWrapper
 {
-    public Type TService { get; set; }
-    public Type TImplementation { get; set; }
-    public ServiceLifeTime LifeTime { get; set; }
+    public required Type TService { get; set; }
+    public required Type TImplementation { get; set; }
+    public required ServiceLifeTime LifeTime { get; set; }
     public int? ThreadId { get; set; }
 }
 

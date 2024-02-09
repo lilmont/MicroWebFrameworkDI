@@ -5,7 +5,7 @@ using MicroWebFramework.Pipeline;
 using MicroWebFramework.Services;
 using System.Net;
 
-DependencyServiceProvider.AddSingleton<INotificationService,SMSService>();
+DependencyServiceProvider.AddSingleton<INotificationService, SMSService>();
 //DependencyServiceProvider.AddScoped<INotificationService,SMSService>();
 //DependencyServiceProvider.AddTransient<INotificationService,SMSService>();
 
@@ -38,13 +38,13 @@ finally
 }
 
 void HandleRequest(HttpListenerContext httpContext)
-{    
+{
     try
     {
         HttpContext request = new()
         {
-            IP = httpContext.Request.RemoteEndPoint?.Address.ToString(),
-            Url = httpContext.Request.RawUrl,
+            IP = httpContext.Request.RemoteEndPoint?.Address.ToString()!,
+            Url = httpContext.Request.RawUrl!,
             Response = httpContext.Response,
             Request = httpContext.Request
         };

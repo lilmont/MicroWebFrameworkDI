@@ -8,6 +8,7 @@ public class BannedIPException : ApplicationException
     {
     }
 }
+
 public class NoControllerProvidedException : ApplicationException
 {
     public NoControllerProvidedException() :
